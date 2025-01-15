@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useShallow } from 'zustand/react/shallow'
 import { Radio } from 'antd'
 import { FormEvent } from 'react'
 import { a, useTransition } from '@react-spring/web'
@@ -33,7 +34,12 @@ const useStore = create<Store>((set) => ({
 }))
 
 const Filter = () => {
-  const { filter, setFilter } = useStore()
+  const { filter, setFilter } = useStore(
+    useShallow((state) => ({
+      filter: state.filter,
+      setFilter: state.setFilter,
+    })),
+  )
   return (
     <Radio.Group onChange={(e) => setFilter(e.target.value)} value={filter}>
       <Radio value="all">All</Radio>
@@ -44,7 +50,11 @@ const Filter = () => {
 }
 
 const TodoItem = ({ item }: { item: Todo }) => {
-  const { setTodos } = useStore()
+  const { setTodos } = useStore(
+    useShallow((state) => ({
+      setTodos: state.setTodos,
+    })),
+  )
   const { title, completed, id } = item
 
   const toggleCompleted = () =>
@@ -70,7 +80,12 @@ const TodoItem = ({ item }: { item: Todo }) => {
 }
 
 const Filtered = () => {
-  const { todos, filter } = useStore()
+  const { todos, filter } = useStore(
+    useShallow((state) => ({
+      todos: state.todos,
+      filter: state.filter,
+    })),
+  )
   const filterTodo = todos.filter((todo) => {
     if (filter === 'all') return true
     if (filter === 'completed') return todo.completed
@@ -90,7 +105,11 @@ const Filtered = () => {
 }
 
 const App = () => {
-  const { setTodos } = useStore()
+  const { setTodos } = useStore(
+    useShallow((state) => ({
+      setTodos: state.setTodos,
+    })),
+  )
   const add = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const title = e.currentTarget.inputTitle.value
